@@ -9,9 +9,15 @@ def home_view(request, *args, **kwargs):
 
 
 def speak_list_view(request, *args, **kwargs):
+    """
+    REST API VIEW
+    Consume by JavaSctipt
+    Return json data
+    """
     qset = Speak.objects.all()
     speak_list = [{"id": x.id, "content": x.content} for x in qset]
     data = {
+        "isUser": False,
         "response": speak_list
     }
     return JsonResponse(data)
@@ -20,7 +26,7 @@ def speak_detail_view(request, speak_id, *args, **kwargs):
     """
     REST API VIEW
     Consume by JavaSctipt
-    Rrtuern json data
+    Return json data
     """
     data = {
         "id" : speak_id,

@@ -6,4 +6,23 @@
 
 {% block content %}
 Welcome to SayIt
+
+
+<script>
+const xhr = new XMLHttpRequest() // equivelant in Python would be xhr = SomeClass()
+const method = 'GET'
+const url = "/speak"
+const responseType = 'json'
+
+xhr.responseType = responseType
+xhr.open(method, url)
+xhr.onload = function() {
+    const serverResponse = xhr.response
+    var listItems = serverResponse.response
+    console.log(listItems)
+}
+
+xhr.send()
+
+</script>
 {% endblock content %}
