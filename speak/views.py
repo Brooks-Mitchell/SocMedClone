@@ -7,6 +7,15 @@ from .models import Speak
 def home_view(request, *args, **kwargs):
     return render(request, "pages/home.html", context={}, status=200)
 
+
+def speak_list_view(request, *args, **kwargs):
+    qset = Speak.objects.all()
+    speak_list = [{"id": x.id, "content": x.content} for x in qset]
+    data = {
+        "response": speak_list
+    }
+    return JsonResponse(data)
+
 def speak_detail_view(request, speak_id, *args, **kwargs):
     """
     REST API VIEW
