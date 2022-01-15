@@ -32,12 +32,15 @@ xhr.open(method, url)
 xhr.onload = function() {
     const serverResponse = xhr.response
     const listedItems = serverResponse.response
-    var finalSpeakStr = ''
+    var finalSpeakStr = ""
     var i; // learning note: doesn't matter if you just declare i or if you set it i = 0;
     for (i=0;i<listedItems.length; i++) {
         console.log(i)
         console.log(listedItems[i])
+        var currentItem = "<divclass='mb-4'><h1>" + listedItems[i].id + "</h1>" + "<p>" + listedItems[i].content + "</p></div>"
+            finalSpeakStr += currentItem
     }
+    speakElement.innerHTML = finalSpeakStr
 }
 
 xhr.send()
