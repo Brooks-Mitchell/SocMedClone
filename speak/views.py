@@ -3,10 +3,25 @@ from django.shortcuts import render
 from django.http import HttpResponse, Http404, JsonResponse
 import random
 
+from .forms import SpeakForm
 from .models import Speak
 
 def home_view(request, *args, **kwargs):
     return render(request, "pages/home.html", context={}, status=200)
+
+def speak_create_view(request, *args, **kwargs):
+
+    # SpeakForm class can be initialized with data or not
+    form = SpeakForm(request.POST or None)
+    
+    # if form is valid then it will be saved to DB
+    if form.is_valid():
+        obj = form.save(commit=False) # per Stackoverflow "useful when you get most of your model data from a form, 
+        # but you need to populate some null=False fields with non-form data.Saving with commit=False gets you a model object, then you can add your extra data and save it."
+
+        obj.save()
+        form = SpeakForm() # re-initialize a new black form
+    return render(request, 'components/form.html', context={"form": form})
 
 
 def speak_list_view(request, *args, **kwargs):
