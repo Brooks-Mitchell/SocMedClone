@@ -27,6 +27,27 @@ const method = 'GET'
 const url = "/speak"
 const responseType = 'json'
 
+function handleDidLike (speak_id, currentCount) {
+    console.log(speak_id, currentCount)
+    return
+}
+
+
+function LikeBtn(speak) {
+    return "<button class='btn btn-primary btn-sm' onclick=handleDidLike(" + speak.id + "," + speak.likes + ")>" + speak.likes + " Likes </button>"
+}
+
+
+function formatSpeakElement(speak) {
+    var formattedSpeak = "<divclass='mb-4 speak' id='speak-" + speak.id 
+    + "'><p>" + speak.content + 
+        "</p><div class='btn-group'>" + LikeBtn(speak) +
+        
+        "</div></div>"
+    return formattedSpeak
+}
+
+
 xhr.responseType = responseType
 xhr.open(method, url)
 xhr.onload = function() {
@@ -35,10 +56,9 @@ xhr.onload = function() {
     var finalSpeakStr = ""
     var i; // learning note: doesn't matter if you just declare i or if you set it i = 0;
     for (i=0;i<listedItems.length; i++) {
-        console.log(i)
-        console.log(listedItems[i])
-        var currentItem = "<divclass='mb-4'><h1>" + listedItems[i].id + "</h1>" + "<p>" + listedItems[i].content + "</p></div>"
-            finalSpeakStr += currentItem
+        var speakObj = listedItems[i]
+        var currentItem = formatSpeakElement(speakObj)
+        finalSpeakStr += currentItem
     }
     speakElement.innerHTML = finalSpeakStr
 }

@@ -1,6 +1,7 @@
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, JsonResponse
+import random
 
 from .models import Speak
 
@@ -15,7 +16,7 @@ def speak_list_view(request, *args, **kwargs):
     Return json data
     """
     qset = Speak.objects.all()
-    speak_list = [{"id": x.id, "content": x.content} for x in qset]
+    speak_list = [{"id": x.id, "content": x.content, "likes": random.randint(0, 1000)} for x in qset]
     data = {
         "isUser": False,
         "response": speak_list
