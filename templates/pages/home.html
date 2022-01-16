@@ -14,7 +14,7 @@
 
 <div class='row mb-3'>
     <div class="col-md-4 mx-auto col-10">
-        <form class="form" method="POST" action="/create-speak">
+        <form class="form" id='speak-create-form' method="POST" action="/create-speak">
             {% csrf_token %}
             <input type='hidden' value='/' name='next'/>
             <textarea class="form-control" name='content' placeholder="Say what you wanna say"></textarea>
@@ -29,19 +29,40 @@
 
 
 <script>
-const speakElement = document.getElementById("speak")
-// speakElement.innerHTML = 'Loading...'
 
+function handleSpeakCreateFormDidSumbit(event) {
+    event.preventDefault()
+}
 
-// var ele1 = "<h1>Hi there 1</h1>"
-// var ele2 = "<h1>Hi there 2</h1>"
-// var ele3 = "<h1>Hi there 3</h1>"
-// speakElement.innerHTML = ele1 + ele2 + ele3
+const speakCreateFormEle = document.getElementById('speak-create-form')
+speakCreateFormEle.addEventListener("submit", handleSpeakCreateFormDidSumbit)
 
-const xhr = new XMLHttpRequest() // equivelant in Python would be xhr = SomeClass()
-const method = 'GET'
-const url = "/speak"
-const responseType = 'json'
+const speakEle = document.getElementById("speak")
+
+const loadSpeak = function (speakElement) {
+    const xhr = new XMLHttpRequest() // equivelant in Python would be xhr = SomeClass()
+    const method = 'GET'
+    const url = "/speak"
+    const responseType = 'json'
+
+    xhr.responseType = responseType
+    xhr.open(method, url)
+    xhr.onload = function() {
+        const serverResponse = xhr.response
+        const listedItems = serverResponse.response
+        var finalSpeakStr = ""
+        var i; // learning note: doesn't matter if you just declare i or if you set it i = 0;
+        for (i=0;i<listedItems.length; i++) {
+            var speakObj = listedItems[i]
+            var currentItem = formatSpeakElement(speakObj)
+            finalSpeakStr += currentItem
+        }
+        speakElement.innerHTML = finalSpeakStr
+    }
+    xhr.send()
+}
+loadSpeak(speakEle)
+
 
 function handleDidLike (speak_id, currentCount) {
     console.log(speak_id, currentCount)
@@ -64,22 +85,7 @@ function formatSpeakElement(speak) {
 }
 
 
-xhr.responseType = responseType
-xhr.open(method, url)
-xhr.onload = function() {
-    const serverResponse = xhr.response
-    const listedItems = serverResponse.response
-    var finalSpeakStr = ""
-    var i; // learning note: doesn't matter if you just declare i or if you set it i = 0;
-    for (i=0;i<listedItems.length; i++) {
-        var speakObj = listedItems[i]
-        var currentItem = formatSpeakElement(speakObj)
-        finalSpeakStr += currentItem
-    }
-    speakElement.innerHTML = finalSpeakStr
-}
 
-xhr.send()
 
 </script>
 {% endblock content %}

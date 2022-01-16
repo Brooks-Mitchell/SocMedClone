@@ -1,6 +1,6 @@
-from django.http import Http404, HttpRequest, HttpResponse
-from django.shortcuts import render
-from django.http import HttpResponse, Http404, JsonResponse
+import django
+from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import render, redirect
 import random
 
 from .forms import SpeakForm
@@ -13,6 +13,8 @@ def speak_create_view(request, *args, **kwargs):
 
     # SpeakForm class can be initialized with data or not
     form = SpeakForm(request.POST or None)
+
+    next_url = request.POST.get("next") or None
     
     # if form is valid then it will be saved to DB
     if form.is_valid():
@@ -20,6 +22,8 @@ def speak_create_view(request, *args, **kwargs):
         # but you need to populate some null=False fields with non-form data.Saving with commit=False gets you a model object, then you can add your extra data and save it."
 
         obj.save()
+        if next_url != None:
+            return redirect(next_url)
         form = SpeakForm() # re-initialize a new black form
     return render(request, 'components/form.html', context={"form": form})
 
