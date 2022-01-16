@@ -5,9 +5,14 @@
 {% endblock head_title %}
 
 {% block content %}
-Welcome to SayIt
 
-<div id='speak'>
+<div class="row text-center">
+    <div class="col">
+        <h1> Welcome to SayIt </h1>
+    </div>
+</div>
+
+<div class="row" id='speak'>
     Loading...
 </div>
 
@@ -39,7 +44,7 @@ function LikeBtn(speak) {
 
 
 function formatSpeakElement(speak) {
-    var formattedSpeak = "<divclass='mb-4 speak' id='speak-" + speak.id 
+    var formattedSpeak = "<div class='col-12 col-md-10 mx-auto mb-4 border rounded py-3 speak' id='speak-" + speak.id 
     + "'><p>" + speak.content + 
         "</p><div class='btn-group'>" + LikeBtn(speak) +
         
