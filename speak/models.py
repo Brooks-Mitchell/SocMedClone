@@ -7,6 +7,9 @@ class Speak(models.Model):
     content = models.TextField(blank=True, null=True)
     image = models.FileField(upload_to='images/', blank=True, null=True)
 
+    class Meta:
+        ordering = ['-id'] # reverses the order of the id's
+
     def serialize(self):
         return {
             "id": self.id,
