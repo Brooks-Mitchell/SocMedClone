@@ -29,6 +29,9 @@ def speak_create_view(request, *args, **kwargs):
         if next_url != None:
             return redirect(next_url)
         form = SpeakForm() # re-initialize a new black form
+    if form.errors:
+        if request.is_ajax():
+            return JsonResponse(form.errors, status=400)
     return render(request, 'components/form.html', context={"form": form})
 
 

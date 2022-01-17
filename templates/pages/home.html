@@ -49,8 +49,16 @@ function handleSpeakCreateFormDidSumbit(event) {
             const ogHtml = speakContainerElement.innerHTML
             speakContainerElement.innerHTML = newSpeakElement + ogHtml
             myForm.reset()  // resets form after submission
+        } else if (xhr.status === 400) {
+            const errorJson = xhr.response
+            console.log(errorJson)
+        } else if (xhr.status === 500) {
+            alert("There was a server error.")
         }
         
+    }
+    xhr.onerror = function() {
+            alert("An error has occured. Please try again later.")
     }
     xhr.send(myFormData)
 }
