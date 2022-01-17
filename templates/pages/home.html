@@ -37,12 +37,17 @@ function handleSpeakCreateFormDidSumbit(event) {
     const url = myForm.getAttribute("action")
     const method = myForm.getAttribute("method")
     const xhr = new XMLHttpRequest()
+    const responseType = 'json'
+    xhr.responseType = responseType
     xhr.open(method, url)
+    xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
+    xhr.setRequestHeader("X-Requested-with", "XMLHttpRequest")
     xhr.onload = function() {
-        const serverResponse = xhr.response
-        console.log(serverResponse)
-        const speakEle = document.getElementById("speak")
-        loadSpeak(speakEle)
+        if (xhr.status === 201){
+            const newSpeakJson = xhr.response
+            const newSpeakElement = formatSpeakElement(newSpeakJson)
+        }
+        
     }
     xhr.send(myFormData)
 }
@@ -50,14 +55,13 @@ function handleSpeakCreateFormDidSumbit(event) {
 const speakCreateFormEle = document.getElementById('speak-create-form')
 speakCreateFormEle.addEventListener("submit", handleSpeakCreateFormDidSumbit)
 
-const speakEle = document.getElementById("speak")
+const speakContainerElement = document.getElementById("speak")
 
 const loadSpeak = function (speakElement) {
     const xhr = new XMLHttpRequest() // equivelant in Python would be xhr = SomeClass()
     const method = 'GET'
     const url = "/speak"
     const responseType = 'json'
-
     xhr.responseType = responseType
     xhr.open(method, url)
     xhr.onload = function() {
@@ -74,7 +78,7 @@ const loadSpeak = function (speakElement) {
     }
     xhr.send()
 }
-loadSpeak(speakEle)
+loadSpeak(speakContainerElement)
 
 
 function handleDidLike (speak_id, currentCount) {

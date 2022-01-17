@@ -22,6 +22,10 @@ def speak_create_view(request, *args, **kwargs):
         # but you need to populate some null=False fields with non-form data.Saving with commit=False gets you a model object, then you can add your extra data and save it."
 
         obj.save()
+
+        if request.is_ajax():
+            return JsonResponse(obj.serialize(), status=201) # 201 == created items
+
         if next_url != None:
             return redirect(next_url)
         form = SpeakForm() # re-initialize a new black form
@@ -35,7 +39,7 @@ def speak_list_view(request, *args, **kwargs):
     Return json data
     """
     qset = Speak.objects.all()
-    speak_list = [{"id": x.id, "content": x.content, "likes": random.randint(0, 1000)} for x in qset]
+    speak_list = [x.serialize() for x in qset]
     data = {
         "isUser": False,
         "response": speak_list
