@@ -32,6 +32,19 @@
 
 function handleSpeakCreateFormDidSumbit(event) {
     event.preventDefault()
+    const myForm = event.target
+    const myFormData = new FormData(myForm)  // FormData built-in class related to form data like the one we have
+    const url = myForm.getAttribute("action")
+    const method = myForm.getAttribute("method")
+    const xhr = new XMLHttpRequest()
+    xhr.open(method, url)
+    xhr.onload = function() {
+        const serverResponse = xhr.response
+        console.log(serverResponse)
+        const speakEle = document.getElementById("speak")
+        loadSpeak(speakEle)
+    }
+    xhr.send(myFormData)
 }
 
 const speakCreateFormEle = document.getElementById('speak-create-form')
