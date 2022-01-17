@@ -12,10 +12,12 @@
     </div>
 </div>
 
+<!-- form -->
 <div class='row mb-3'>
     <div class="col-md-4 mx-auto col-10">
         <form class="form" id='speak-create-form' method="POST" action="/create-speak">
             {% csrf_token %}
+            <div class="d-none alert alert-danger" id='speak-create-form-error'></div>
             <input type='hidden' value='/' name='next'/>
             <textarea required='required' class="form-control" name='content' placeholder="Say what you wanna say"></textarea>
             <button type='sumbit' class="btn btn-primary">Say It</button>
@@ -29,6 +31,18 @@
 
 
 <script>
+
+function handleSpeakFormError(msg, display) {
+    var myErrorDiv = document.getElementById("speak-create-form-error")
+    if (display === true) {
+        // show error
+        myErrorDiv.setAttribute("class", "d-block alert alert-danger")
+        myErrorDiv.innerText = msg
+    } else {
+        // hide error
+        myErrorDiv.setAttribute("class", "d-none alert alert-danger")
+    }
+}
 
 function handleSpeakCreateFormDidSumbit(event) {
     event.preventDefault()
@@ -44,6 +58,7 @@ function handleSpeakCreateFormDidSumbit(event) {
     xhr.setRequestHeader("X-Requested-with", "XMLHttpRequest")
     xhr.onload = function() {
         if (xhr.status === 201){
+            handleSpeakFormError("", false)
             const newSpeakJson = xhr.response
             const newSpeakElement = formatSpeakElement(newSpeakJson)
             const ogHtml = speakContainerElement.innerHTML
@@ -51,14 +66,26 @@ function handleSpeakCreateFormDidSumbit(event) {
             myForm.reset()  // resets form after submission
         } else if (xhr.status === 400) {
             const errorJson = xhr.response
-            console.log(errorJson)
+            const contentError = errorJson.content
+            let contentErrorMsg; 
+            if (contentError) {
+                contentErrorMsg = contentError[0]
+                if (contentErrorMsg) {
+                    handleSpeakFormError(contentErrorMsg, true)
+                } else {
+                    alert("an error occurred")
+                }
+            } else {
+                alert("an error occurred")
+            }
+                
         } else if (xhr.status === 500) {
-            alert("There was a server error.")
+            alert('There was a server error')
         }
-        
-    }
+    
+    }    
     xhr.onerror = function() {
-            alert("An error has occured. Please try again later.")
+            alert("An error has occurred. Please try again later.")
     }
     xhr.send(myFormData)
 }
