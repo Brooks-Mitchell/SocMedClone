@@ -2,17 +2,21 @@ from django.conf import settings
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse, response
 from django.shortcuts import render, redirect
 import random
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from .forms import SpeakForm
 from .models import Speak
 from .serializers import SpeakSerializer
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
 
 def home_view(request, *args, **kwargs):
     return render(request, "pages/home.html", context={}, status=200)
 
 @api_view(['POST'])
+# @authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
 def speak_create_view(request, *args, **kwargs):
     serializer = SpeakSerializer(data=request.POST)
     if serializer.is_valid(raise_exception=True):
@@ -25,7 +29,7 @@ def speak_create_view(request, *args, **kwargs):
 def speak_detail_view(request, speak_id, *args, **kwargs):
     qset = Speak.objects.filter(id=speak_id)
     if not qset.exists():
-        return response({}, status=404)
+        return Response({}, status=404)
     obj = qset.first()
     serializer = SpeakSerializer(obj)
     return Response(serializer.data, status=200)

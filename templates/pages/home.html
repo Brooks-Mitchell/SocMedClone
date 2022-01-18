@@ -83,6 +83,10 @@ function handleSpeakCreateFormDidSumbit(event) {
             alert('Please login')
             window.location.href = "/login"
         }
+        else if (xhr.status === 403) {
+            alert('Please login')
+            window.location.href = "/login"
+        }
         else if (xhr.status === 500) {
             alert('There was a server error')
         }
