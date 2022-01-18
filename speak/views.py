@@ -5,11 +5,21 @@ import random
 
 from .forms import SpeakForm
 from .models import Speak
+from .serializers import SpeakSerializer
+
 
 def home_view(request, *args, **kwargs):
     return render(request, "pages/home.html", context={}, status=200)
 
+
 def speak_create_view(request, *args, **kwargs):
+    serializer = SpeakSerializer(data=request.POST or None)
+    if serializer.is_valid():
+        obj = serializer.save(user=request.user) # serializer can take this here, vs the 3 lines of obj down in the form
+        return JsonResponse(serializer.data, status=201)
+    return JsonResponse({}, status=400)
+
+def speak_create_view_pure_django(request, *args, **kwargs):
     user = request.user
 
     if not request.user.is_authenticated:

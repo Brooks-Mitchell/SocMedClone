@@ -2,8 +2,9 @@ import re
 from unittest.util import _MAX_LENGTH
 from django import forms
 from .models import Speak
+from django.conf import settings
 
-MAX_SPEAK_LENGTH = 360
+MAX_SPEAK_LENGTH = settings.MAX_SPEAK_LENGTH
 
 class SpeakForm(forms.ModelForm):
     class Meta:

@@ -29,10 +29,16 @@ DEBUG = True
 ALLOWED_HOSTS = [] # domain would be '.domain.com'
 LOGIN_URL = '/login'  # changed from default of "/accounts/login/"
 
+MAX_SPEAK_LENGTH = 360
+
 # Application definition
 
 INSTALLED_APPS = [
+    # internal
     'speak',
+    # third-party
+    'rest_framework',
+    # default
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
