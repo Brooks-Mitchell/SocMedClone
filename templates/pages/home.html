@@ -99,6 +99,8 @@ speakCreateFormEle.addEventListener("submit", handleSpeakCreateFormDidSumbit)
 
 const speakContainerElement = document.getElementById("speak")
 
+
+// handles the list view content
 const loadSpeak = function (speakElement) {
     const xhr = new XMLHttpRequest() // equivelant in Python would be xhr = SomeClass()
     const method = 'GET'
@@ -108,7 +110,7 @@ const loadSpeak = function (speakElement) {
     xhr.open(method, url)
     xhr.onload = function() {
         const serverResponse = xhr.response
-        const listedItems = serverResponse.response
+        const listedItems = serverResponse
         var finalSpeakStr = ""
         var i; // learning note: doesn't matter if you just declare i or if you set it i = 0;
         for (i=0;i<listedItems.length; i++) {

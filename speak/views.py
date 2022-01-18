@@ -1,23 +1,43 @@
 from django.conf import settings
-from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
+from django.http import Http404, HttpRequest, HttpResponse, JsonResponse, response
 from django.shortcuts import render, redirect
 import random
-
+from rest_framework.response import Response
 from .forms import SpeakForm
 from .models import Speak
 from .serializers import SpeakSerializer
+from rest_framework.decorators import api_view
 
 
 def home_view(request, *args, **kwargs):
     return render(request, "pages/home.html", context={}, status=200)
 
-
+@api_view(['POST'])
 def speak_create_view(request, *args, **kwargs):
-    serializer = SpeakSerializer(data=request.POST or None)
-    if serializer.is_valid():
-        obj = serializer.save(user=request.user) # serializer can take this here, vs the 3 lines of obj down in the form
-        return JsonResponse(serializer.data, status=201)
-    return JsonResponse({}, status=400)
+    serializer = SpeakSerializer(data=request.POST)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save(user=request.user) # serializer can take this here, vs the 3 lines of obj down in the form
+        return Response(serializer.data, status=201)
+    return Response({}, status=400)
+
+
+@api_view(['GET'])
+def speak_detail_view(request, speak_id, *args, **kwargs):
+    qset = Speak.objects.filter(id=speak_id)
+    if not qset.exists():
+        return response({}, status=404)
+    obj = qset.first()
+    serializer = SpeakSerializer(obj)
+    return Response(serializer.data, status=200)
+
+@api_view(['GET'])
+def speak_list_view(request, *args, **kwargs):
+    qset = Speak.objects.all()
+    serializer = SpeakSerializer(qset, many=True)
+    return Response(serializer.data, status=200)
+
+
+
 
 def speak_create_view_pure_django(request, *args, **kwargs):
     user = request.user
@@ -52,7 +72,7 @@ def speak_create_view_pure_django(request, *args, **kwargs):
     return render(request, 'components/form.html', context={"form": form})
 
 
-def speak_list_view(request, *args, **kwargs):
+def speak_list_view_pure_django(request, *args, **kwargs):
     """
     REST API VIEW
     Consume by JavaSctipt
@@ -66,7 +86,7 @@ def speak_list_view(request, *args, **kwargs):
     }
     return JsonResponse(data)
 
-def speak_detail_view(request, speak_id, *args, **kwargs):
+def speak_detail_view_pure_django(request, speak_id, *args, **kwargs):
     """
     REST API VIEW
     Consume by JavaSctipt
