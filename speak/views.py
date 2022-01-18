@@ -1,4 +1,4 @@
-import django
+from django.conf import settings
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 import random
@@ -10,6 +10,13 @@ def home_view(request, *args, **kwargs):
     return render(request, "pages/home.html", context={}, status=200)
 
 def speak_create_view(request, *args, **kwargs):
+    user = request.user
+
+    if not request.user.is_authenticated:
+        user = None
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # work-around for deprecated "request.is_ajax"
+            return JsonResponse({}, status=401)
+        return redirect(settings.LOGIN_URL)
 
     # SpeakForm class can be initialized with data or not
     form = SpeakForm(request.POST or None)
@@ -20,10 +27,10 @@ def speak_create_view(request, *args, **kwargs):
     if form.is_valid():
         obj = form.save(commit=False) # per Stackoverflow "useful when you get most of your model data from a form, 
         # but you need to populate some null=False fields with non-form data.Saving with commit=False gets you a model object, then you can add your extra data and save it."
+        
+        obj.user = user
 
-        obj.save()
-
-        if request.is_ajax():
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # work-around for deprecated "request.is_ajax"
             return JsonResponse(obj.serialize(), status=201) # 201 == created items
 
         if next_url != None:

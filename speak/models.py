@@ -11,6 +11,13 @@ class Speak(models.Model):
     content = models.TextField(blank=True, null=True)
     image = models.FileField(upload_to='images/', blank=True, null=True)
 
+
+
+    # shows the content of each post in the admin (instead of "object 57" for example)
+    def __str__(self):
+        return self.content
+
+
     class Meta:
         ordering = ['-id'] # reverses the order of the id's
 

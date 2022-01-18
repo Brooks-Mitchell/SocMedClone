@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-zt$r30jh(s+1nym26+d5&t7g%m#v-egx%xdkv31z&r*!9%mnv1
 DEBUG = True
 
 ALLOWED_HOSTS = [] # domain would be '.domain.com'
-
+LOGIN_URL = '/login'  # changed from default of "/accounts/login/"
 
 # Application definition
 
