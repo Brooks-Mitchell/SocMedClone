@@ -34,6 +34,20 @@ def speak_detail_view(request, speak_id, *args, **kwargs):
     serializer = SpeakSerializer(obj)
     return Response(serializer.data, status=200)
 
+@api_view(['DELETE', 'POST'])
+@permission_classes([IsAuthenticated])
+def speak_delete_view(request, speak_id, *args, **kwargs):
+    qset = Speak.objects.filter(id=speak_id)
+    if not qset.exists():
+        return Response({}, status=404)
+    qset = qset.filter(user=request.user)
+    if not qset.exists():
+        return Response({"message": "not allowed"}, status=401)
+    obj = qset.first()
+    obj.delete()
+    return Response({"message": "deleted"}, status=200)
+
+
 @api_view(['GET'])
 def speak_list_view(request, *args, **kwargs):
     qset = Speak.objects.all()
