@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .forms import SpeakForm
 from .models import Speak
-from .serializers import SpeakSerializer
+from .serializers import SpeakSerializer, speakActionSerializer
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
 
@@ -45,6 +45,31 @@ def speak_delete_view(request, speak_id, *args, **kwargs):
         return Response({"message": "not allowed"}, status=401)
     obj = qset.first()
     obj.delete()
+    return Response({"message": "deleted"}, status=200)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def speak_action_view(request, *args, **kwargs):
+    serializer = speakActionSerializer(request.POST)
+    if serializer.is_valid(raise_exception=True):
+        data = serializer.validated_data
+        speak_id = data.get("id")
+        action = data.get("action")
+
+
+        qset = Speak.objects.filter(id=speak_id)
+        if not qset.exists():
+            return Response({}, status=404)
+        obj = qset.first()
+        if action == "like":
+            obj.likes.add(request.user)
+        elif action == "unlike":
+            obj.likes.remove(request.user)
+        elif action =="respeak":
+            # TODO
+            pass
+            
     return Response({"message": "deleted"}, status=200)
 
 

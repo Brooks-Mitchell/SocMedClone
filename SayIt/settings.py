@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [] # domain would be '.domain.com'
 LOGIN_URL = '/login'  # changed from default of "/accounts/login/"
 
 MAX_SPEAK_LENGTH = 360
+SPEAK_ACTION_OPTIONS = ["like", "unlike", "respeak"]
 
 # Application definition
 
