@@ -131,6 +131,21 @@ loadSpeak(speakContainerElement)
 
 function handleDidLike (speak_id, currentCount) {
     console.log(speak_id, currentCount)
+    const url = "/api/speak/action"
+    const method = "POST"
+    const data = JSON.stringify({
+        id:speak_id,
+        action: 'like'
+    })
+    const xhr = new XMLHttpRequest()
+    xhr.open(method, url)
+    xhr.setRequestHeader("Content-Type", "application/json")
+    xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
+    xhr.setRequestHeader("X-Requested-with", "XMLHttpRequest")
+    xhr.onload = function() {
+        console.log(xhr.status, xhr.response)
+    }
+    xhr.send(data)
     return
 }
 

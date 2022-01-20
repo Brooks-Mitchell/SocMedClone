@@ -15,7 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from speak.views import home_view, speak_detail_view, speak_list_view, speak_create_view, speak_delete_view
+from speak.views import (home_view, 
+    speak_detail_view, 
+    speak_list_view, 
+    speak_create_view, 
+    speak_delete_view, 
+    speak_action_view,
+    )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,6 +30,7 @@ urlpatterns = [
     path('speak', speak_list_view),
     path('create-speak', speak_create_view),
     path('api/speak/<int:speak_id>/delete', speak_delete_view),
+    path('api/speak/action', speak_action_view),
 
     
 ]

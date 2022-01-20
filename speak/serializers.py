@@ -1,3 +1,4 @@
+from django.http import request
 from rest_framework import serializers
 from django.conf import settings
 from .models import Speak
@@ -16,9 +17,13 @@ class speakActionSerializer(serializers.Serializer):
         return value
 
 class SpeakSerializer(serializers.ModelSerializer):
+    likes = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Speak
-        fields = ['content']
+        fields = ['id', 'content', 'likes']
+
+    def get_likes(self, obj):
+        return obj.likes.count()
 
     def validate_content(self, value):
         if len(value) > MAX_SPEAK_LENGTH:

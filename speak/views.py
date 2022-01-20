@@ -51,7 +51,7 @@ def speak_delete_view(request, speak_id, *args, **kwargs):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def speak_action_view(request, *args, **kwargs):
-    serializer = speakActionSerializer(request.POST)
+    serializer = speakActionSerializer(data=request.POST)
     if serializer.is_valid(raise_exception=True):
         data = serializer.validated_data
         speak_id = data.get("id")
@@ -80,71 +80,71 @@ def speak_list_view(request, *args, **kwargs):
     return Response(serializer.data, status=200)
 
 
+# replaced by DRF API based views
 
+# def speak_create_view_pure_django(request, *args, **kwargs):
+#     user = request.user
 
-def speak_create_view_pure_django(request, *args, **kwargs):
-    user = request.user
+#     if not request.user.is_authenticated:
+#         user = None
+#         if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # work-around for deprecated "request.is_ajax"
+#             return JsonResponse({}, status=401)
+#         return redirect(settings.LOGIN_URL)
 
-    if not request.user.is_authenticated:
-        user = None
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # work-around for deprecated "request.is_ajax"
-            return JsonResponse({}, status=401)
-        return redirect(settings.LOGIN_URL)
+#     # SpeakForm class can be initialized with data or not
+#     form = SpeakForm(request.POST or None)
 
-    # SpeakForm class can be initialized with data or not
-    form = SpeakForm(request.POST or None)
-
-    next_url = request.POST.get("next") or None
+#     next_url = request.POST.get("next") or None
     
-    # if form is valid then it will be saved to DB
-    if form.is_valid():
-        obj = form.save(commit=False) # per Stackoverflow "useful when you get most of your model data from a form, 
-        # but you need to populate some null=False fields with non-form data.Saving with commit=False gets you a model object, then you can add your extra data and save it."
+#     # if form is valid then it will be saved to DB
+#     if form.is_valid():
+#         obj = form.save(commit=False) # per Stackoverflow "useful when you get most of your model data from a form, 
+#         # but you need to populate some null=False fields with non-form data.Saving with commit=False gets you a model object, then you can add your extra data and save it."
         
-        obj.user = user
+#         obj.user = user
 
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # work-around for deprecated "request.is_ajax"
-            return JsonResponse(obj.serialize(), status=201) # 201 == created items
+#         if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # work-around for deprecated "request.is_ajax"
+#             return JsonResponse(obj.serialize(), status=201) # 201 == created items
 
-        if next_url != None:
-            return redirect(next_url)
-        form = SpeakForm() # re-initialize a new black form
-    if form.errors:
-        if request.is_ajax():
-            return JsonResponse(form.errors, status=400)
-    return render(request, 'components/form.html', context={"form": form})
+#         if next_url != None:
+#             return redirect(next_url)
+#         form = SpeakForm() # re-initialize a new black form
+#     if form.errors:
+#         if request.is_ajax():
+#             return JsonResponse(form.errors, status=400)
+#     return render(request, 'components/form.html', context={"form": form})
 
 
-def speak_list_view_pure_django(request, *args, **kwargs):
-    """
-    REST API VIEW
-    Consume by JavaSctipt
-    Return json data
-    """
-    qset = Speak.objects.all()
-    speak_list = [x.serialize() for x in qset]
-    data = {
-        "isUser": False,
-        "response": speak_list
-    }
-    return JsonResponse(data)
+# def speak_list_view_pure_django(request, *args, **kwargs):
+#     """
+#     REST API VIEW
+#     Consume by JavaSctipt
+#     Return json data
+#     """
+#     qset = Speak.objects.all()
+#     speak_list = [x.serialize() for x in qset]
+#     data = {
+#         "isUser": False,
+#         "response": speak_list
+#     }
+#     return JsonResponse(data)
 
-def speak_detail_view_pure_django(request, speak_id, *args, **kwargs):
-    """
-    REST API VIEW
-    Consume by JavaSctipt
-    Return json data
-    """
-    data = {
-        "id" : speak_id,
+# def speak_detail_view_pure_django(request, speak_id, *args, **kwargs):
+#     """
+#     REST API VIEW
+#     Consume by JavaSctipt
+#     Return json data
+#     """
+#     data = {
+#         "id" : speak_id,
        
-        # "image_path" : obj.image.url
-    }
-    status = 200
-    try:
-        obj = Speak.objects.get(id=speak_id)
-        data['content'] = obj.content
-    except:
-        data['message'] = "Not found"
-        status = 404
-    return JsonResponse(data, status=status)
+#         # "image_path" : obj.image.url
+#     }
+#     status = 200
+#     try:
+#         obj = Speak.objects.get(id=speak_id)
+#         data['content'] = obj.content
+#     except:
+#         data['message'] = "Not found"
+#         status = 404
+#     return JsonResponse(data, status=status)
